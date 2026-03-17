@@ -96,6 +96,24 @@ export default function Home() {
                   </SecondaryButton>
                 </div>
               </div>
+
+              <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="text-sm font-semibold text-white">Now live: Video #2</div>
+                <div className="mt-2 text-sm text-zinc-300">Best AI Voice Tools for Creators</div>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                  <a
+                    className="inline-flex h-11 items-center justify-center rounded-xl bg-white px-4 text-sm font-semibold text-black transition hover:bg-zinc-200"
+                    href="https://youtu.be/qvGNClsSadc"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Watch on YouTube
+                  </a>
+                  <SecondaryButton href="/best-ai-voice-tools-for-creators">
+                    Video #2 links
+                  </SecondaryButton>
+                </div>
+              </div>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <SecondaryButton href="/tools">Tools page</SecondaryButton>
                 <SecondaryButton href="/brief">Weekly Brief</SecondaryButton>
