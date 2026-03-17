@@ -25,28 +25,28 @@ const tools: Tool[] = [
     bestFor: "Fast testing and quick drafts",
     caveat: "Voices can sound generic and recognizable",
     linkLabel: "Try built-in TTS",
-    href: "#",
+    href: "/go/tts",
   },
   {
     name: "Descript",
     bestFor: "Voice cleanup + edit by text",
     caveat: "Naturalness depends on plan/settings",
     linkLabel: "Try Descript",
-    href: "#",
+    href: "/go/descript",
   },
   {
     name: "Play.ht",
     bestFor: "Lots of voice options and languages",
     caveat: "Easy to sound robotic if too fast",
     linkLabel: "Try Play.ht",
-    href: "#",
+    href: "/go/playht",
   },
   {
     name: "ElevenLabs",
     bestFor: "Most natural narration for longer videos",
     caveat: "Keep one consistent voice + settings",
     linkLabel: "Try ElevenLabs",
-    href: "#",
+    href: "/go/elevenlabs",
   },
 ];
 
