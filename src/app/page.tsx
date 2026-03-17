@@ -77,6 +77,25 @@ export default function Home() {
                 Publish two list videos (tools) and one weekly brief (sources). Each
                 upload gets a matching page with links.
               </p>
+              <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="text-sm font-semibold text-white">Now live: Video #1</div>
+                <div className="mt-2 text-sm text-zinc-300">
+                  Best AI Video Tools for Creators
+                </div>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                  <a
+                    className="inline-flex h-11 items-center justify-center rounded-xl bg-white px-4 text-sm font-semibold text-black transition hover:bg-zinc-200"
+                    href="https://youtu.be/JcAM-atDMg8"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Watch on YouTube
+                  </a>
+                  <SecondaryButton href="/best-ai-video-tools-for-creators">
+                    Video #1 links
+                  </SecondaryButton>
+                </div>
+              </div>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <SecondaryButton href="/tools">Tools page</SecondaryButton>
                 <SecondaryButton href="/brief">Weekly Brief</SecondaryButton>
