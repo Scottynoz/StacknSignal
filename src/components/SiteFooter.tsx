@@ -24,6 +24,12 @@ export function SiteFooter() {
             <Link href="/about" className="text-sm text-zinc-300 hover:text-white">
               About
             </Link>
+            <Link
+              href="/disclosure"
+              className="text-sm text-zinc-300 hover:text-white"
+            >
+              Disclosure
+            </Link>
           </nav>
 
           <div className="max-w-lg text-sm text-zinc-500">
