@@ -30,6 +30,10 @@ export function SiteFooter() {
             Some links may be affiliate links. If you buy through them, we may earn a
             commission at no extra cost to you.
           </div>
+
+          <div className="max-w-lg text-sm text-zinc-500">
+            As an Amazon Associate I earn from qualifying purchases.
+          </div>
         </div>
       </Container>
     </footer>
