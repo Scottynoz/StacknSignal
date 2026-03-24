@@ -6,6 +6,7 @@ const nav = [
   { href: "/tools", label: "Tools" },
   { href: "/brief", label: "Weekly Brief" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function SiteHeader() {

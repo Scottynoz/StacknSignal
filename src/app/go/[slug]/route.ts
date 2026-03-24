@@ -1,15 +1,17 @@
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { getAffiliateLink } from "@/lib/affiliateLinks";
 
-export function GET(
-  _request: Request,
-  { params }: { params: { slug: string } },
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> },
 ) {
-  const link = getAffiliateLink(params.slug);
+  const { slug } = await params;
+  const link = getAffiliateLink(slug);
 
   if (!link) {
-    return NextResponse.redirect(new URL("/tools", _request.url), 302);
+    return NextResponse.redirect(new URL("/tools", request.url), 302);
   }
 
   return NextResponse.redirect(link.url, 302);
