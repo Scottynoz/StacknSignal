@@ -32,18 +32,18 @@ export async function POST(request: Request) {
     const mailTo = process.env.CONTACT_TO;
     const mailFrom = process.env.CONTACT_FROM || smtpUser;
 
-    if (!smtpHost || !smtpPortRaw || !smtpUser || !smtpPass || !mailTo || !mailFrom) {
+    if (!smtpHost || !smtpPortRaw || !smtpUser || !smtpPass || !mailTo) {
       return NextResponse.json(
         {
           error:
-            "Server not configured. Missing one of SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, CONTACT_TO, CONTACT_FROM",
+            "Server not configured. Missing one of SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, CONTACT_TO (CONTACT_FROM is optional and defaults to SMTP_USER)",
         },
         { status: 500 }
       );
     }
 
     const smtpPort = Number(smtpPortRaw);
-    if (!Number.isFinite(smtpPort)) {
+    if (!Number.isInteger(smtpPort) || smtpPort < 1 || smtpPort > 65535) {
       return NextResponse.json({ error: "Invalid SMTP_PORT" }, { status: 500 });
     }
 
@@ -57,23 +57,28 @@ export async function POST(request: Request) {
       },
     });
 
-    const subjectName = name ? ` from ${name}` : "";
+    try {
+      const subjectName = name ? ` from ${name}` : "";
 
-    await transporter.sendMail({
-      from: mailFrom,
-      to: mailTo,
-      replyTo: email,
-      subject: `Stack N Signal contact${subjectName}`,
-      text: [
-        `Name: ${name || "(not provided)"}`,
-        `Email: ${email}`,
-        "",
-        message,
-      ].join("\n"),
-    });
+      await transporter.sendMail({
+        from: mailFrom,
+        to: mailTo,
+        replyTo: email,
+        subject: `Stack N Signal contact${subjectName}`,
+        text: [
+          `Name: ${name || "(not provided)"}`,
+          `Email: ${email}`,
+          "",
+          message,
+        ].join("\n"),
+      });
+    } finally {
+      transporter.close();
+    }
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    console.error("/api/contact failed", err);
     return NextResponse.json({ error: "Failed to send" }, { status: 500 });
   }
 }
