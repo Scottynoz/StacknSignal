@@ -5,9 +5,9 @@ import { getAffiliateLink } from "@/lib/affiliateLinks";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  { params }: { params: Promise<{ slug: string }> },
 ) {
-  const { slug } = params;
+  const { slug } = await params;
   const link = getAffiliateLink(slug);
 
   if (!link) {
