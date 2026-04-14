@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
 import { Card } from "@/components/Card";
 import { Container } from "@/components/Container";
@@ -17,9 +17,10 @@ export default function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [website, setWebsite] = useState("");
   const [state, setState] = useState<SubmitState>({ status: "idle" });
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
 
     const trimmedEmail = email.trim();
@@ -40,10 +41,14 @@ export default function ContactPage() {
           name: name.trim(),
           email: trimmedEmail,
           message: trimmedMessage,
+          website: website.trim(),
         }),
       });
 
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const resContentType = res.headers.get("content-type") || "";
+      const data = (resContentType.includes("application/json")
+        ? ((await res.json()) as { ok?: boolean; error?: string })
+        : {}) as { ok?: boolean; error?: string };
 
       if (!res.ok || !data.ok) {
         setState({ status: "error", message: data.error || "Failed to send." });
@@ -54,6 +59,7 @@ export default function ContactPage() {
       setName("");
       setEmail("");
       setMessage("");
+      setWebsite("");
     } catch {
       setState({ status: "error", message: "Failed to send." });
     }
@@ -72,6 +78,14 @@ export default function ContactPage() {
 
             <Card className="mt-8 p-8">
               <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+                <input
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  autoComplete="off"
+                  tabIndex={-1}
+                  className="hidden"
+                  aria-hidden="true"
+                />
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="flex flex-col gap-2">
                     <span className="text-sm text-zinc-300">Name</span>

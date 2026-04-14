@@ -1,6 +1,8 @@
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   try {
     const contentType = request.headers.get("content-type") || "";
@@ -8,9 +10,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Expected application/json" }, { status: 415 });
     }
 
-    let body: { name?: string; email?: string; message?: string };
+    let body: { name?: string; email?: string; message?: string; website?: string };
     try {
-      body = (await request.json()) as { name?: string; email?: string; message?: string };
+      body = (await request.json()) as {
+        name?: string;
+        email?: string;
+        message?: string;
+        website?: string;
+      };
     } catch {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
@@ -18,6 +25,7 @@ export async function POST(request: Request) {
     const name = (body.name || "").trim();
     const email = (body.email || "").trim();
     const message = (body.message || "").trim();
+    const website = (body.website || "").trim();
 
     const MAX_NAME_LENGTH = 200;
     const MAX_EMAIL_LENGTH = 320;
@@ -42,8 +50,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Message too long" }, { status: 400 });
     }
 
-    if (/[\r\n]/.test(email)) {
-      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    if (website) {
+      return NextResponse.json({ ok: true });
+    }
+
+    if (/[\r\n]/.test(email) || /[\r\n]/.test(name)) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
     const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -84,6 +96,10 @@ export async function POST(request: Request) {
     });
 
     const subjectName = name ? ` from ${name}` : "";
+
+    if (mailFrom && /[\r\n]/.test(mailFrom)) {
+      return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+    }
 
     await transporter.sendMail({
       from: mailFrom,
