@@ -8,21 +8,47 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Expected application/json" }, { status: 415 });
     }
 
-    const body = (await request.json()) as {
-      name?: string;
-      email?: string;
-      message?: string;
-    };
+    let body: { name?: string; email?: string; message?: string };
+    try {
+      body = (await request.json()) as { name?: string; email?: string; message?: string };
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
 
     const name = (body.name || "").trim();
     const email = (body.email || "").trim();
     const message = (body.message || "").trim();
+
+    const MAX_NAME_LENGTH = 200;
+    const MAX_EMAIL_LENGTH = 320;
+    const MAX_MESSAGE_LENGTH = 10000;
 
     if (!email || !message) {
       return NextResponse.json(
         { error: "Missing required fields: email, message" },
         { status: 400 }
       );
+    }
+
+    if (name.length > MAX_NAME_LENGTH) {
+      return NextResponse.json({ error: "Name too long" }, { status: 400 });
+    }
+
+    if (email.length > MAX_EMAIL_LENGTH) {
+      return NextResponse.json({ error: "Email too long" }, { status: 400 });
+    }
+
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json({ error: "Message too long" }, { status: 400 });
+    }
+
+    if (/[\r\n]/.test(email)) {
+      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+
+    const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailLooksValid) {
+      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
     const smtpHost = process.env.SMTP_HOST;
@@ -36,7 +62,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "Server not configured. Missing one of SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, CONTACT_TO (CONTACT_FROM is optional and defaults to SMTP_USER)",
+            "Server not configured. Missing one of SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, CONTACT_TO",
         },
         { status: 500 }
       );
@@ -57,24 +83,20 @@ export async function POST(request: Request) {
       },
     });
 
-    try {
-      const subjectName = name ? ` from ${name}` : "";
+    const subjectName = name ? ` from ${name}` : "";
 
-      await transporter.sendMail({
-        from: mailFrom,
-        to: mailTo,
-        replyTo: email,
-        subject: `Stack N Signal contact${subjectName}`,
-        text: [
-          `Name: ${name || "(not provided)"}`,
-          `Email: ${email}`,
-          "",
-          message,
-        ].join("\n"),
-      });
-    } finally {
-      transporter.close();
-    }
+    await transporter.sendMail({
+      from: mailFrom,
+      to: mailTo,
+      replyTo: email,
+      subject: `Stack N Signal contact${subjectName}`,
+      text: [
+        `Name: ${name || "(not provided)"}`,
+        `Email: ${email}`,
+        "",
+        message,
+      ].join("\n"),
+    });
 
     return NextResponse.json({ ok: true });
   } catch (err) {
